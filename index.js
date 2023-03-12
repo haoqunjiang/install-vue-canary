@@ -175,8 +175,8 @@ if (normalizeAnswer(shouldInstall)) {
     await execa(bin, ['install'], { stdio: 'pipe' })
     s.stop(`Installed via ${bin}`)
   } catch (e) {
-    log.error(e.stderr || e.message)
     s.stop(pico.red('Installation failed'))
+    log.error(e.stderr || e.message)
     process.exit(1)
   }
 }
