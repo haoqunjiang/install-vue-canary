@@ -159,7 +159,7 @@ if (pm === 'pnpm') {
 }
 
 // write pkg back
-writeFileSync(packageJsonPath, JSON.stringify(pkg, undefined, 2), 'utf-8')
+writeFileSync(packageJsonPath, JSON.stringify(pkg, undefined, 2) + '\n', 'utf-8')
 
 // prompt & run install
 const bin = forcePackageManagerBin || pm
