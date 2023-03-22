@@ -1,6 +1,6 @@
 {
   "name": "install-vue-canary",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Install the canary version of Vue in the project",
   "type": "module",
   "exports": {
