@@ -145,11 +145,32 @@ if (pm === 'pnpm') {
   }
   log.info(`Updated ${pico.cyan('pnpm.overrides')} in ${pico.yellow('package.json')}`)
 } else if (pm === 'npm') {
+  // NPM requires exact version (won't work without version or `@latest`)
+  const { stdout } = await execa('npm', ['info', '@vue/canary@latest', 'version', '--json'], { stdio: 'pipe' })
+  const latest = JSON.parse(stdout)
+  const OVERRIDES_WITH_EXACT_VERSIONS = Object.fromEntries(
+    Object.entries(CANARY_OVERRIDES).map(([k, v]) => [k, `${v}@${latest}`])
+  )
   pkg.overrides = {
     ...pkg.overrides,
-    ...CANARY_OVERRIDES
+    ...OVERRIDES_WITH_EXACT_VERSIONS
   }
   log.info(`Updated ${pico.cyan('overrides')} in ${pico.yellow('package.json')}`)
+
+  // NPM requires direct dependencies to be rewritten too
+  let hasDependenciesBeenRewritten = false
+  const vuePackages = Object.keys(OVERRIDES_WITH_EXACT_VERSIONS)
+  for (const name of vuePackages) {
+    for (const depType of ['dependencies', 'devDependencies', 'optionalDependencies']) {
+      if (pkg[depType]?.[name]) {
+        pkg[depType][name] = OVERRIDES_WITH_EXACT_VERSIONS[name]
+        hasDependenciesBeenRewritten = true
+      }
+    }
+  }
+  if (hasDependenciesBeenRewritten) {
+    log.info(`Updated dependency versions in ${pico.yellow('package.json')}`)
+  }
 } else if (pm === 'yarn' || pm === 'cnpm') {
   pkg.resolutions = {
     ...pkg.resolutions,
