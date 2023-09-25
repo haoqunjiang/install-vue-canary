@@ -1,3 +1,5 @@
+# Deprecated. Please use https://github.com/sodatea/install-vue instead
+
 # install-vue-canary
 
 > Install Vue canary releases in your project
